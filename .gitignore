@@ -1,0 +1,11 @@
+*.py[cod]
+build/
+develop-eggs/
+dist/
+.eggs/
+*.egg-info/
+*.egg
+.venv/
+.env
+pypi-password.txt
+/tests/

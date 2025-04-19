@@ -1,0 +1,11 @@
+# setup and build instructions
+# pip install pip-tools build twine bumpver pytest pytest-runner
+# python setup.py pytest
+# bumpver update --patch
+# pip-compile pyproject.toml
+# python -m build
+# twine check dist/*
+# twine upload --repository testpypi dist/*
+# twine upload dist/*
+
+bumpver update --allow-dirty --patch
