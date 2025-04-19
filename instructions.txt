@@ -7,5 +7,7 @@
 # twine check dist/*
 # twine upload --repository testpypi dist/*
 # twine upload dist/*
+# preplan publisher on test.pypi
+# preplan publisher on pypi
 
 bumpver update --allow-dirty --patch
