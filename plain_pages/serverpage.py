@@ -10,13 +10,14 @@ import requests
 from requests.exceptions import HTTPError #, ConnectionError
 from requests.adapters   import HTTPAdapter, Retry
 import redis
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 from datasourcelib import Database          # wrapper for postgres/cockroach/sqlite/mongodb
+from secretmanager import SecretManager     # for reading secrets from Vault, K8s, or environment variables
 
 class ServerPage:
     """ ... """
-    def __init__(self, prod: bool, period: int):
+    def __init__(self, prod: bool, period: int, secretcfg: dict, secretdef: dict):
         self.prod = prod
         self.type = None
         self.rsess = requests.session()
@@ -24,36 +25,36 @@ class ServerPage:
                         backoff_factor=0.5,
                         status_forcelist=[500, 502, 503, 504])
         self.rsess.mount('https://', HTTPAdapter(max_retries=retries))
-        self.secrets = self.read_environment()
+        self.secrets = self.self.read_secrets(secretcfg, secretdef)
         self.dba = self.connect_db()
         self.r = self.connect_redis()
         self.update_period = period
         self.last_update = 0
         self.output = False
 
-    def read_environment(self):
-        load_dotenv()
-        secrets = {
-            "timezone": os.environ.get('timezone', 'America/New_York'),
-            "db_host" : os.environ.get('db_host', 'localhost'),
-            "db_port" : os.environ.get('db_port', '5432'),
-            "dbtype"  : os.environ.get('dbtype', 'postgres'),
-            "dbpass"  : os.environ.get('dbpass', 'None'),
-            "dbuser"  : os.environ.get('dbuser', 'None'),
-            "dbname"  : os.environ.get('dbname', 'None'),
-            "dbtable" : os.environ.get('dbtable', 'None'),
-            "rhost"   : os.environ.get('rhost', 'localhost'),
-            "rpass"   : os.environ.get('rpass', 'None'),
-            "latitude"          : os.environ.get('latitude', 'None'),
-            "longitude"         : os.environ.get('longitude', 'None'),
-            "garmin_url"        : os.environ.get('garmin_url', 'None'),
-            "github_owner"      : os.environ.get('github_owner', 'None'),
-            "github_repo"       : os.environ.get('github_repo', 'None'),
-            "google_calendar_id": os.environ.get('google_calendar_id', 'None'),
-            "owmkey"         : os.environ.get('owmkey', 'None'),
-            "github_api_key" : os.environ.get('github_api_key', 'None'),
-            "google_api_key" : os.environ.get('google_api_key', 'None')
-        }
+    def read_secrets(self, secretcfg: dict, secretdef: dict):
+        """ Read secrets from a file, Vault, Kubernetes, or environment variables. """
+        sm = SecretManager(secretcfg, log_level='INFO')
+        if secretcfg.get("SOURCE") == "FILE":
+            # Read secrets from a file
+            secrets = sm.read_secrets(secretdef.get("file_name"), secretdef.get("file_type"))
+        elif secretcfg.get("SOURCE") == "ENVIRONMENT":
+            # Read secrets from environment variables
+            secrets = sm.read_secrets(secretdef.get("environment_definition"), secretdef.get("env_file"), 
+                                      secretdef.get("definition_type"))
+        elif secretcfg.get("SOURCE") == "KUBERNETES":
+            # Read secrets from Kubernetes
+            secrets = sm.read_secrets(secretdef.get("secret_name"), secretdef.get("namespace"),
+                                  secretdef.get("read_type"))
+        elif secretcfg.get("SOURCE") == "KUBEVAULT":
+            
+               secrets = sm.read_secrets(secretdef.get("secret_name"), secretdef.get("namespace"), 
+                                  secretdef.get("read_type"), secretdef.get("secret_key"), 
+                                  secretdef.get("transit_key"))
+        else:
+            print(f"Unknown secret source: {secretcfg.get('SOURCE')}")
+            return None
+        del sm  # Clean up the SecretManager instance
         return secrets
 
     def connect_redis(self):
