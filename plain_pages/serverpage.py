@@ -26,6 +26,7 @@ class ServerPage:
                         status_forcelist=[500, 502, 503, 504])
         self.rsess.mount('https://', HTTPAdapter(max_retries=retries))
         self.secrets = self.read_secrets(secretcfg, secretdef)
+        self.timezone = self.secrets.get('timezone')
         self.dba = self.connect_db()
         self.r = self.connect_redis()
         self.update_period = period
@@ -93,7 +94,7 @@ class ServerPage:
             print(f'Updating {type(self).__name__}...')
             self.update()
             self.r.publish('update', self.type)
-            print(f"{arrow.now().to(self.secrets['timezone']).format('MM/DD/YYYY h:mm:ss A ZZZ')}: " \
+            print(f"{arrow.now().to(self.timezone).format('MM/DD/YYYY h:mm:ss A ZZZ')}: " \
                   f"{type(self).__name__} updated.")
 
     def run(self):
@@ -102,8 +103,8 @@ class ServerPage:
         tnow = arrow.now()
         data = {}
         data['type']   = f'{self.type}-Server'
-        data['updated'] = tnow.to(self.secrets['timezone']).format('MM/DD/YYYY h:mm A ZZZ')
-        data['valid']   = tnow.to(self.secrets['timezone']).format('MM/DD/YYYY h:mm:ss A ZZZ')
+        data['updated'] = tnow.to(self.timezone).format('MM/DD/YYYY h:mm A ZZZ')
+        data['valid']   = tnow.to(self.timezone).format('MM/DD/YYYY h:mm:ss A ZZZ')
         data['values'] = {}
         self.dba.write(data)
 
