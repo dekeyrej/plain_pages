@@ -25,7 +25,7 @@ class ServerPage:
                         backoff_factor=0.5,
                         status_forcelist=[500, 502, 503, 504])
         self.rsess.mount('https://', HTTPAdapter(max_retries=retries))
-        self.secrets = self.self.read_secrets(secretcfg, secretdef)
+        self.secrets = self.read_secrets(secretcfg, secretdef)
         self.dba = self.connect_db()
         self.r = self.connect_redis()
         self.update_period = period
