@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
     name = "dekeyrej-plain_pages"
-    version = "0.9.6"
+    version = "0.9.7"
     description = "base classes for microservice servers and matrix display pages"
     readme = "README.md"
     authors = [{name = "J. DeKeyrel", email = "noneyabusiness@notemail.com"}]
@@ -29,7 +29,7 @@ build-backend = "setuptools.build_meta"
 moon-glance = "plain_pages.examples.moon_clock.run_demo:main"
 
 [tool.bumpver]
-current_version = "0.9.6"
+current_version = "0.9.7"
 version_pattern = "'MAJOR.MINOR.PATCH[PYTAGNUM]"
 commit_message = "bump version {old_version} -> {new_version}"
 tag_message = "{new_version}"

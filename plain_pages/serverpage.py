@@ -74,7 +74,7 @@ class ServerPage:
             self.last_update = now
             print(f'Updating {type(self).__name__}...')
             self.update()
-            if self.r:
+            if hasattr(self, "r") and self.r is not None:
                 self.r.publish('update', self.type)
             print(f"{arrow.now().to(self.timezone).format('MM/DD/YYYY h:mm:ss A ZZZ')}: " \
                   f"{type(self).__name__} updated.")
