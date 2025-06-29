@@ -71,7 +71,14 @@ class DisplayPage:
 
     def fix_edt(self,timestr):
         """" Fix non-uniqueness of the 'EDT' timezone abbreviation :-/ """
-        return timestr.replace('EDT','US/Eastern')
+        if 'EDT' not in timestr:
+            return timestr
+        else:
+            # replace EDT with US/Eastern
+            # this is a hack to fix the non-uniqueness of the EDT timezone abbreviation
+            # which is used in the US and Canada, but not in Europe
+            # see
+            return timestr.replace('EDT','US/Eastern')
     
     def stringToDateTime(self,isostring):  # formerly 'stringToTime'
         #accepts an ISO date/time string and returns a time object based on the hour and minute (sets seconds to 0)
