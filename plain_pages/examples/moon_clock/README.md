@@ -48,7 +48,9 @@ python run_demo.py
 This will:
 - Fetch lunar data from MET Norway
 - Write it to a local SQLite file
-- Render a moon_glance.bmp image in the static/ directory
+- Render a moon_glance.bmp image
+
+![Moon Glance Output](moon_glance.bmp)
 
 ## 🖼️ Output
 The resulting image includes:
