@@ -169,7 +169,7 @@ class ServerPage:
     def now_str(self, now: arrow, secs: bool):
         """ ... """
         if secs:
-            return now.format('MM/DD/YYYY h:mm:ss A ZZZ')
+            return now.format('MM/DD/YYYY h:mm:ss A Z')
 
-        return now.format('MM/DD/YYYY h:mm A ZZZ')
+        return now.format('MM/DD/YYYY h:mm A Z')
     
