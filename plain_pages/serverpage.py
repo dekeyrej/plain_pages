@@ -1,19 +1,16 @@
 """ ... """
 import time
-import os
 import json
-
 
 import arrow
 import socketserver                         # for liveness probe (MyTCPHandler(), TCPServer)
 import requests   
-from requests.exceptions import HTTPError #, ConnectionError
-from requests.adapters   import HTTPAdapter, Retry
+from   requests.exceptions import HTTPError #, ConnectionError
+from   requests.adapters   import HTTPAdapter, Retry
 import redis
-# from dotenv import load_dotenv
 
-from datasourcelib import Database          # wrapper for postgres/cockroach/sqlite/mongodb
-from secretmanager import SecretManager     # for reading secrets from Vault, K8s, or environment variables
+from   datasourcelib       import Database          # wrapper for postgres/cockroach/sqlite/mongodb
+from   secretmanager       import SecretManager     # for reading secrets from Vault, K8s, or environment variables
 
 class ServerPage:
     """ ... """
@@ -27,8 +24,9 @@ class ServerPage:
         self.rsess.mount('https://', HTTPAdapter(max_retries=retries))
         self.secrets = self.read_secrets(secretcfg, secretdef)
         self.timezone = self.secrets.get('timezone')
-        self.dba = self.connect_db()
-        self.r = self.connect_redis()
+        self.dba = Database(self.secrets['db_type'], self.secrets['db_params'])
+        if self.secrets['rhost']:
+            self.r = self.connect_redis()
         self.update_period = period
         self.last_update = 0
         self.output = False
@@ -66,23 +64,6 @@ class ServerPage:
                                  password=self.secrets['rpass'])
         return r
     
-    def connect_db(self):
-        """ 
-        This is very postgres-centric. Need to allow for SQLite and MongoDB (at least). 
-        additional secret keys for dbtype, dbport, dbname, tblname, prodhost and dev/test host.
-        """
-        DBHOST = self.secrets['db_host']
-        DBPORT = self.secrets['db_port']
-        DBNAME = self.secrets['dbname']
-        TBLNAME = self.secrets['dbtable']
-        
-        db_params = {"user": self.secrets['dbuser'],
-             "pass": self.secrets['dbpass'], \
-             "host": DBHOST, "port":  DBPORT, \
-             "db_name": DBNAME, "tbl_name": TBLNAME}
-
-        return Database('postgres', db_params)
-
     def update(self): # really must be overridden...
         """ ... """
         print(f"{type(self).__name__} updated.")
@@ -93,7 +74,8 @@ class ServerPage:
             self.last_update = now
             print(f'Updating {type(self).__name__}...')
             self.update()
-            self.r.publish('update', self.type)
+            if self.r:
+                self.r.publish('update', self.type)
             print(f"{arrow.now().to(self.timezone).format('MM/DD/YYYY h:mm:ss A ZZZ')}: " \
                   f"{type(self).__name__} updated.")
 

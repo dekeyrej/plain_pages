@@ -9,3 +9,8 @@ dist/
 .env
 pypi-password.txt
 /tests/
+__pycache__/
+bin/
+include/
+lib/
+lib64/

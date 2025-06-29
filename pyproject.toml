@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
     name = "dekeyrej-plain_pages"
-    version = "0.9.4"
+    version = "0.9.5"
     description = "base classes for microservice servers and matrix display pages"
     readme = "README.md"
     authors = [{name = "J. DeKeyrel", email = "noneyabusiness@notemail.com"}]
@@ -26,7 +26,7 @@ build-backend = "setuptools.build_meta"
     requires-python = ">=3.9"
 
 [tool.bumpver]
-current_version = "0.9.4"
+current_version = "0.9.5"
 version_pattern = "'MAJOR.MINOR.PATCH[PYTAGNUM]"
 commit_message = "bump version {old_version} -> {new_version}"
 tag_message = "{new_version}"
