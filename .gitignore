@@ -13,6 +13,6 @@ __pycache__/
 bin/
 include/
 lib/
-lib64/
+lib64
 moon_clock.db
 moon_glance.bmp
