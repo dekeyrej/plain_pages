@@ -14,12 +14,14 @@ Adapted to the rpi-rgb-led-matrix python bindings by JSD
 """
 # import requests
 import json
-import arrow
-
-from PIL import Image, ImageFont, ImageDraw
-from plain_pages.displaypage import DisplayPage
 import sys
 import os
+from pathlib import Path
+
+import arrow
+from PIL import Image, ImageFont, ImageDraw
+from plain_pages.displaypage import DisplayPage
+
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/rpi-rgb-led-matrix/bindings/python'))
 
 class MoonDisplay(DisplayPage):
@@ -33,9 +35,10 @@ class MoonDisplay(DisplayPage):
         self.type = 'Moon'
         # self.event = 'moon_event'
         # self.no_event = 'no_moon_event'
-        self.smfont  = ImageFont.load(r'fonts/helvR10.pil')
-        self.sm2font = ImageFont.load(r'fonts/6x10.pil')
-        self.lgfont  = ImageFont.load(r'fonts/helvB12.pil')
+        self.HERE = Path(__file__).parent.resolve()
+        self.smfont  = ImageFont.load(str(self.HERE / 'fonts/helvR10.pil'))
+        self.sm2font = ImageFont.load(str(self.HERE / 'fonts/6x10.pil'))
+        self.lgfont  = ImageFont.load(str(self.HERE / 'fonts/helvB12.pil'))
         self.TWELVE_HOUR = twelve
         self.moonPhases = list()
         self.loadPhases()
@@ -86,4 +89,4 @@ class MoonDisplay(DisplayPage):
 
     def loadPhases(self):
         for i in range(0,100):
-            self.moonPhases.append(Image.open("img/moon/moon" + '{:02}'.format(i) + ".bmp"))
+            self.moonPhases.append(Image.open(str(self.HERE / f"img/moon/moon{i:02}.bmp")))

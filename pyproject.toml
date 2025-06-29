@@ -25,6 +25,9 @@ build-backend = "setuptools.build_meta"
     ]
     requires-python = ">=3.9"
 
+[project.scripts]
+moon-glance = "plain_pages.examples.moon_clock.run_demo:main"
+
 [tool.bumpver]
 current_version = "0.9.6"
 version_pattern = "'MAJOR.MINOR.PATCH[PYTAGNUM]"

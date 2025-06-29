@@ -30,7 +30,7 @@ class DisplayPage:
         if self.values is not None: # got good data
             self.data_dirty = True # we have new data
             self.values['valid'] = self.fix_edt(self.values['valid'])
-            next = arrow.get(self.values['valid'],'MM/DD/YYYY h:mm:ss A ZZZ') # next holds the new validity date
+            next = arrow.get(self.values['valid'],'MM/DD/YYYY h:mm:ss A Z') # next holds the new validity date
             if self.nextUpdate == next.shift(minutes=+self.offsetCounter): # we got a stale message
                 self.offsetCounter += 1
                 self.nextUpdate = next.shift(minutes=+self.offsetCounter) #check again in 1 minute

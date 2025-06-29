@@ -85,8 +85,8 @@ class ServerPage:
         tnow = arrow.now()
         data = {}
         data['type']   = f'{self.type}-Server'
-        data['updated'] = tnow.to(self.timezone).format('MM/DD/YYYY h:mm A ZZZ')
-        data['valid']   = tnow.to(self.timezone).format('MM/DD/YYYY h:mm:ss A ZZZ')
+        data['updated'] = tnow.to(self.timezone).format('MM/DD/YYYY h:mm A Z')
+        data['valid']   = tnow.to(self.timezone).format('MM/DD/YYYY h:mm:ss A Z')
         data['values'] = {}
         self.dba.write(data)
 
