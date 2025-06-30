@@ -1,7 +1,15 @@
 name: Publish Python 🐍 distribution 📦 to PyPI and TestPyPI
 
-on: push
-
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'setup.py'
+      - 'pyproject.toml'
+      - 'plain_pages/displaypage.py'
+      - 'plain_pages/serverpage.py'
+      - 'plain_pages/requirements.txt'
 jobs:
   build:
     name: Build distribution 📦
